@@ -10,6 +10,7 @@ import {
   TouchableWithoutFeedback,
   Image,
   Dimensions,
+  KeyboardAvoidingView,
 } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
 
@@ -19,29 +20,31 @@ const initialState = {
   password: null,
 };
 
-const RegistrationScreen = () => {
+const RegistrationScreen = ({ navigation }) => {
   const [register, setRegister] = useState(initialState);
   const [isHidden, setIsHidden] = useState(true);
   const [loginActive, setIsLoginActive] = useState(false);
   const [isEmailActive, setIsEmailActive] = useState(false);
   const [isPasswordActive, setIsPasswordActive] = useState(false);
+  const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
+  // const [isAuth, setIsAuth] = useState(false);
   // const screen = Dimensions.get("screen").scale;
-  // const width = Dimensions.get("window");
-  // console.log(width);
-  // useEffect(() => {
-  //   const onChange = () => {
-  //     const width = Dimensions.get("window").width;
-  //   };
-  //   Dimensions.addEventListener("change", onChange);
-  //   console.log(Dimensions.get("window"));
-  //   return () => {
-  //     Dimensions.removeEventListener("change", onChange);
-  //   };
-  // }, []);
+  useEffect(() => {
+    const onChangeWidth = () => {
+      const width = Dimensions.get("window").width;
+      setDimensions(width);
+    };
+    const widthListener = Dimensions.addEventListener("change", onChangeWidth);
+    return () => {
+      widthListener.remove();
+    };
+  }, []);
 
   const onSubmit = () => {
     Keyboard.dismiss();
     setRegister(initialState);
+    setIsAuth(true);
+    navigation.navigate("Post");
     console.log(register);
   };
 
@@ -52,6 +55,9 @@ const RegistrationScreen = () => {
           style={styles.bg}
           source={require("../assets/images/photo-bg.png")}
         >
+          {/* <KeyboardAvoidingView
+            behavior={Platform.OS == "ios" ? "padding" : "height"}
+          > */}
           <View style={styles.containerForm}>
             <View style={styles.form}>
               <View style={styles.avatarContainer}>
@@ -68,7 +74,10 @@ const RegistrationScreen = () => {
                 <TextInput
                   value={register.login}
                   onChangeText={(value) =>
-                    setRegister((prevState) => ({ ...prevState, login: value }))
+                    setRegister((prevState) => ({
+                      ...prevState,
+                      login: value,
+                    }))
                   }
                   onFocus={() => {
                     setIsLoginActive(true);
@@ -87,7 +96,10 @@ const RegistrationScreen = () => {
                 <TextInput
                   value={register.email}
                   onChangeText={(value) =>
-                    setRegister((prevState) => ({ ...prevState, email: value }))
+                    setRegister((prevState) => ({
+                      ...prevState,
+                      email: value,
+                    }))
                   }
                   onFocus={() => {
                     setIsEmailActive(true);
@@ -151,7 +163,11 @@ const RegistrationScreen = () => {
               >
                 <Text style={styles.textBtn}>Sign in</Text>
               </TouchableOpacity>
-              <TouchableOpacity activeOpacity={0.7} style={styles.linkLoginBtn}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("Login")}
+                activeOpacity={0.7}
+                style={styles.linkLoginBtn}
+              >
                 <Text style={styles.textLoginBtn}>
                   {" "}
                   Already have an account? Log in
@@ -159,6 +175,7 @@ const RegistrationScreen = () => {
               </TouchableOpacity>
             </View>
           </View>
+          {/* </KeyboardAvoidingView> */}
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
@@ -173,6 +190,8 @@ const styles = StyleSheet.create({
   bg: {
     flex: 1,
     justifyContent: "center",
+    // width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
   },
   containerForm: {
     flex: 0.3,
@@ -268,6 +287,7 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     fontSize: 16,
     color: "#1B4371",
+    // paddingBottom: 144,
   },
 });
 

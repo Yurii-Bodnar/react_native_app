@@ -1,11 +1,17 @@
-import RegistrationScreen from "./Screens/RegistrationScreen";
-import useCachedResources from "./hoocks/useCachedResources";
-import LoginScreen from "./Screens/LoginScreen";
+import { NavigationContainer, useRoute } from "@react-navigation/native";
+import react from "react";
+import React, { useState } from "react";
+
+import useCachedResources from "./hooks/useCachedResources";
+import Routes from "./Routes/Routes.js";
+
 export default function App() {
+  const [isAuth, setIsAuth] = useState(true);
+  const routing = Routes(isAuth);
   const isLoadingComplete = useCachedResources();
   if (!isLoadingComplete) {
     return null;
   } else {
-    return <RegistrationScreen />;
+    return <NavigationContainer>{routing}</NavigationContainer>;
   }
 }

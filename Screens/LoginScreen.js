@@ -18,12 +18,13 @@ const initialState = {
   password: null,
 };
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation, isAuth }) => {
   const [login, setLogin] = useState(initialState);
   const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
   const [isHidden, setIsHidden] = useState(true);
   const [isEmailActive, setIsEmailActive] = useState(false);
   const [isPasswordActive, setIsPasswordActive] = useState(false);
+  console.log(navigation);
 
   useEffect(() => {
     const onChangeWidth = () => {
@@ -40,6 +41,7 @@ const LoginScreen = () => {
     setLogin(initialState);
     console.log(login);
   };
+
   return (
     <TouchableWithoutFeedback
       onPress={() => {
@@ -136,6 +138,7 @@ const LoginScreen = () => {
               <TouchableOpacity
                 activeOpacity={0.7}
                 style={styles.linkRegisterBtn}
+                onPress={() => navigation.navigate("Register")}
               >
                 <Text style={styles.textRegister}>
                   {" "}
