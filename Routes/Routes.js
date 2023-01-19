@@ -30,11 +30,9 @@ const Routes = (isAuth) => {
     </AuthStack.Navigator>
   ) : (
     <mainTab.Navigator
-      // barStyle={{ backgroundColor: "tomato" }}
       activeColor="#FF6C00"
       screenOptions={{
         tabBarShowLabel: false,
-
         tabBarStyle: [
           {
             height: 83,
@@ -45,7 +43,16 @@ const Routes = (isAuth) => {
     >
       <mainTab.Screen
         options={{
+          headerShown: false,
           headerTitleAlign: "center",
+          headerRight: () => (
+            <MaterialIcons
+              name="logout"
+              size={24}
+              color={"#BDBDBD"}
+              style={{ marginRight: 10 }}
+            />
+          ),
           tabBarIcon: ({ focused, size, color }) => (
             <Feather
               name="grid"

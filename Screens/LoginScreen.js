@@ -24,7 +24,7 @@ const LoginScreen = ({ navigation, isAuth }) => {
   const [isHidden, setIsHidden] = useState(true);
   const [isEmailActive, setIsEmailActive] = useState(false);
   const [isPasswordActive, setIsPasswordActive] = useState(false);
-  console.log(navigation);
+  // console.log(navigation);
 
   useEffect(() => {
     const onChangeWidth = () => {

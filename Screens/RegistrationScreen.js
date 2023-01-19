@@ -45,7 +45,7 @@ const RegistrationScreen = ({ navigation }) => {
     setRegister(initialState);
     setIsAuth(true);
     navigation.navigate("Post");
-    console.log(register);
+    // console.log(register);
   };
 
   return (
