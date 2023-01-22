@@ -10,6 +10,10 @@ import {
 import { Camera } from "expo-camera";
 import { Feather, SimpleLineIcons } from "@expo/vector-icons";
 import * as Location from "expo-location";
+import { db, storage } from "../fireBase/config";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 const CreatePostsScreen = ({ navigation }) => {
   const [camera, setCamera] = useState(null);
@@ -18,6 +22,8 @@ const CreatePostsScreen = ({ navigation }) => {
   const [address, setAddress] = useState(null);
   const [title, setTitle] = useState(null);
   const [permission, requestPermission] = Camera.useCameraPermissions();
+
+  const { user } = useSelector((state) => state.auth);
 
   const takePhoto = async () => {
     const photo = await camera.takePictureAsync();
@@ -42,10 +48,45 @@ const CreatePostsScreen = ({ navigation }) => {
     })();
   }, []);
   // console.log(location);
+  const metadata = {
+    contentType: "image/jpeg",
+  };
 
-  const sendPhoto = () => {
-    // console.log(navigation);
-    navigation.navigate("Default", { photo, location, title, address });
+  const uploadPhoto = async () => {
+    const photoRef = ref(storage, "photos/" + Date.now().toString() + ".jpg");
+    const response = await fetch(photo);
+    const file = await response.blob();
+    //const uniq = Date.now().toString();
+    //const data = await storage.re;
+    console.log("file", file);
+    const uploadTask = await uploadBytes(photoRef, file, metadata);
+    const url = await getDownloadURL(uploadTask.ref);
+
+    return url;
+  };
+
+  const sendPhoto = async () => {
+    try {
+      const url = await uploadPhoto();
+      console.log("Photo available at", url);
+      const post = {
+        photo: url,
+        title: title,
+        location,
+        address,
+        userId: user.userId,
+        login: user.login,
+        commentsCount: 0,
+        likes: 0,
+      };
+      console.log("post", db);
+      const docRef = await addDoc(collection(db, "posts"), post);
+      console.log("Document written with ID: ", docRef.id);
+
+      navigation.navigate("Default");
+    } catch (error) {
+      console.log(error.message);
+    }
   };
   // address, location, title
   return (

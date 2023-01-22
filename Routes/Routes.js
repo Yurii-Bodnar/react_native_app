@@ -9,10 +9,13 @@ import CreatePostsScreen from "../Screens/CreatePostsScreen";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
+import { useSelector } from "react-redux";
 
 const Routes = (isAuth) => {
   const AuthStack = createNativeStackNavigator();
   const mainTab = createBottomTabNavigator();
+  const myState = useSelector((state) => state);
+  // // console.log("Auth:", myState);
 
   return !isAuth ? (
     <AuthStack.Navigator>

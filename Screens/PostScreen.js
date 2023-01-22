@@ -4,9 +4,13 @@ import { MaterialIcons, Feather } from "@expo/vector-icons";
 import CommentsScreen from "./NestedRoutes/CommentsScreen";
 import DefaultScreen from "./NestedRoutes/DefaultScreen";
 import MapScreen from "./NestedRoutes/MapScreen";
+import { useDispatch } from "react-redux";
+import { logOut } from "../redux/auth/authOperations";
 
 const NestedRouts = createNativeStackNavigator();
 const PostScreen = ({ navigation, route }) => {
+  const dispatch = useDispatch();
+  const handleLogOut = () => dispatch(logOut());
   // console.log(route.params);
   return (
     <NestedRouts.Navigator
@@ -32,7 +36,7 @@ const PostScreen = ({ navigation, route }) => {
           title: "Posts",
           headerLeft: () => {},
           headerRight: () => (
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={handleLogOut}>
               <MaterialIcons
                 name="logout"
                 size={24}

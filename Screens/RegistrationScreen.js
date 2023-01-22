@@ -13,14 +13,18 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import * as SplashScreen from "expo-splash-screen";
+import * as ImagePicker from "expo-image-picker";
+import { useDispatch } from "react-redux";
+import { authRegister } from "../redux/auth/authOperations";
 
 const initialState = {
-  login: null,
-  email: null,
-  password: null,
+  login: "",
+  email: "",
+  password: "",
 };
 
 const RegistrationScreen = ({ navigation }) => {
+  const [image, setImage] = useState(null);
   const [register, setRegister] = useState(initialState);
   const [isHidden, setIsHidden] = useState(true);
   const [loginActive, setIsLoginActive] = useState(false);
@@ -29,6 +33,9 @@ const RegistrationScreen = ({ navigation }) => {
   const [dimensions, setDimensions] = useState(Dimensions.get("window").width);
   // const [isAuth, setIsAuth] = useState(false);
   // const screen = Dimensions.get("screen").scale;
+  const dispatch = useDispatch();
+  console.log(image);
+
   useEffect(() => {
     const onChangeWidth = () => {
       const width = Dimensions.get("window").width;
@@ -40,12 +47,29 @@ const RegistrationScreen = ({ navigation }) => {
     };
   }, []);
 
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    console.log("press", result);
+
+    if (!result.canceled) {
+      setImage(result.assets[0].uri);
+    }
+  };
+  // const pickImage = () => {
+  //   console.log("press", image);
+  //   // image
+  // };
   const onSubmit = () => {
     Keyboard.dismiss();
     setRegister(initialState);
-    setIsAuth(true);
-    navigation.navigate("Post");
-    // console.log(register);
+    dispatch(authRegister({ ...register }));
   };
 
   return (
@@ -61,13 +85,19 @@ const RegistrationScreen = ({ navigation }) => {
           <View style={styles.containerForm}>
             <View style={styles.form}>
               <View style={styles.avatarContainer}>
-                <TouchableWithoutFeedback>
-                  <Image
-                    style={styles.addAvatar}
-                    source={require("../assets/images/add.png")}
-                  />
-                </TouchableWithoutFeedback>
+                {image && (
+                  <Image source={{ uri: image }} style={styles.avatarImage} />
+                )}
+
+                <TouchableOpacity
+                  style={styles.addAvatar}
+                  activeOpacity={0.7}
+                  onPress={pickImage}
+                >
+                  <Image source={require("../assets/images/add.png")} />
+                </TouchableOpacity>
               </View>
+
               <Text style={styles.text}>Registration</Text>
               {/* <View style={{ marginBottom: isKeyboard ? 32 : 0 }}> */}
               <View style={{ marginBottom: 10 }}>
@@ -155,7 +185,6 @@ const RegistrationScreen = ({ navigation }) => {
                 )}
               </View>
               {/* </View> */}
-
               <TouchableOpacity
                 onPress={onSubmit}
                 activeOpacity={0.7}
@@ -217,11 +246,17 @@ const styles = StyleSheet.create({
     marginHorizontal: "auto",
     borderRadius: 16,
   },
+  avatarImage: {
+    width: 120,
+    height: 120,
+    borderRadius: 16,
+  },
   addAvatar: {
     width: 25,
     height: 25,
     position: "absolute",
-    bottom: 15,
+    bottom: 60,
+    // top: 75,
     right: -12,
   },
   text: {

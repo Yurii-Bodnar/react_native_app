@@ -12,6 +12,8 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from "react-native";
+import { useDispatch } from "react-redux";
+import { authLogin } from "../redux/auth/authOperations";
 
 const initialState = {
   email: null,
@@ -25,6 +27,7 @@ const LoginScreen = ({ navigation, isAuth }) => {
   const [isEmailActive, setIsEmailActive] = useState(false);
   const [isPasswordActive, setIsPasswordActive] = useState(false);
   // console.log(navigation);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const onChangeWidth = () => {
@@ -36,10 +39,12 @@ const LoginScreen = ({ navigation, isAuth }) => {
       widthListener.remove();
     };
   }, []);
+
   const onSubmit = () => {
     Keyboard.dismiss();
     setLogin(initialState);
-    console.log(login);
+    dispatch(authLogin({ ...login }));
+    // console.log(login);
   };
 
   return (

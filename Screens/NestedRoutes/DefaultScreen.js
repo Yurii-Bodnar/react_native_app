@@ -8,26 +8,36 @@ import {
   View,
 } from "react-native";
 import { Ionicons, SimpleLineIcons } from "@expo/vector-icons";
-const DefaultScreen = ({ navigation, route }) => {
-  console.log(route.params);
-  // const { photo, address, location, title } = route.params;
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../../fireBase/config";
 
+const DefaultScreen = ({ navigation, route }) => {
   const [posts, setPost] = useState([]);
+
+  const getAllPost = async () => {
+    onSnapshot(collection(db, "posts"), (data) => {
+      setPost(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    });
+  };
   useEffect(() => {
-    route.params ? setPost((prevPosts) => [...prevPosts, route.params]) : null;
-  }, [route.params]);
+    getAllPost();
+  }, []);
   return (
     <View style={styles.container}>
       <FlatList
         data={posts}
-        // keyExtractor={(item, indx) => indx.toString()}
+        keyExtractor={(item, indx) => indx.toString()}
         renderItem={({ item }) => (
           <View style={styles.imgWrap}>
             <Image source={{ uri: item.photo }} style={styles.img} />
             <View>
-              <Text>{route.params.title}</Text>
+              <Text>{item.title}</Text>
             </View>
-            <TouchableOpacity onPress={() => navigation.navigate("Comments")}>
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Comments", { postId: item.id })
+              }
+            >
               <View
                 style={{
                   display: "flex",
@@ -41,7 +51,9 @@ const DefaultScreen = ({ navigation, route }) => {
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Map", route.params)}
+              onPress={() =>
+                navigation.navigate("Map", { location: item.location })
+              }
             >
               <View
                 style={{
@@ -57,7 +69,7 @@ const DefaultScreen = ({ navigation, route }) => {
                   name="location-pin"
                   color="#BDBDBD"
                 />
-                <Text>{route.params.address}</Text>
+                <Text>{item.address}</Text>
               </View>
             </TouchableOpacity>
           </View>
